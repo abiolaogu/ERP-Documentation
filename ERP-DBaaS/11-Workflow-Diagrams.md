@@ -1,0 +1,535 @@
+# ERP-DBaaS Workflow Diagrams
+
+## Document Control
+
+| Field             | Value                          |
+|-------------------|--------------------------------|
+| Document Title    | ERP-DBaaS Workflow Diagrams    |
+| Version           | 1.0.0                         |
+| Date              | 2026-02-24                     |
+| Classification    | Internal - Engineering         |
+| Author            | Platform Engineering Team      |
+
+---
+
+## Table of Contents
+
+1. [Instance Provisioning Flow](#1-instance-provisioning-flow)
+2. [Backup Workflow](#2-backup-workflow)
+3. [Scaling Workflow](#3-scaling-workflow)
+4. [Credential Rotation Flow](#4-credential-rotation-flow)
+5. [Failover / HA Workflow](#5-failover--ha-workflow)
+6. [Plugin Installation Flow](#6-plugin-installation-flow)
+
+---
+
+## 1. Instance Provisioning Flow
+
+The provisioning flow covers the lifecycle from initial request through validation, CRD creation, operator reconciliation, and final ready state.
+
+```
+ ┌──────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+ │  Client   │────>│  Go Gateway  │────>│  Node.js API │────>│   Quota      │
+ │ (UI/API)  │     │  (Port 8090) │     │  (Port 3000) │     │   Engine     │
+ └──────────┘     └──────────────┘     └──────────────┘     └──────┬───────┘
+                                                                    │
+                                              ┌─────────────────────┤
+                                              │ Quota Check          │
+                                              ▼                      │
+                                        ┌───────────┐          ┌────▼─────┐
+                                        │  REJECTED  │          │ APPROVED │
+                                        │ (Over      │          │          │
+                                        │  Quota)    │          └────┬─────┘
+                                        └───────────┘               │
+                                                                    ▼
+                                                            ┌───────────────┐
+                                                            │ Generate CRD  │
+                                                            │ (e.g. Yugabyte│
+                                                            │  DBInstance)  │
+                                                            └───────┬───────┘
+                                                                    │
+                                                                    ▼
+                                                            ┌───────────────┐
+                                                            │ Submit to K8s │
+                                                            │ API Server    │
+                                                            └───────┬───────┘
+                                                                    │
+                                                                    ▼
+                                                            ┌───────────────┐
+                                                            │ Operator      │
+                                                            │ Watches CRD   │
+                                                            │ (Reconcile)   │
+                                                            └───────┬───────┘
+                                                                    │
+                                              ┌─────────────────────┤
+                                              │                     │
+                                              ▼                     ▼
+                                      ┌──────────────┐    ┌──────────────────┐
+                                      │ Create       │    │ Create Services  │
+                                      │ StatefulSet/ │    │ & NetworkPolicies│
+                                      │ Deployment   │    └────────┬─────────┘
+                                      └──────┬───────┘             │
+                                             │                     │
+                                             ▼                     ▼
+                                      ┌──────────────┐    ┌──────────────────┐
+                                      │ Create PVCs  │    │ Generate Creds   │
+                                      │ (Storage)    │    │ Store in Secret  │
+                                      └──────┬───────┘    └────────┬─────────┘
+                                             │                     │
+                                             └──────────┬──────────┘
+                                                        ▼
+                                                ┌───────────────┐
+                                                │ Health Checks │
+                                                │ (Readiness)   │
+                                                └───────┬───────┘
+                                                        │
+                                           ┌────────────┤
+                                           │            │
+                                           ▼            ▼
+                                     ┌──────────┐ ┌──────────┐
+                                     │  FAILED  │ │  READY   │
+                                     │ (Retry / │ │ (Status  │
+                                     │  Alert)  │ │  Update) │
+                                     └──────────┘ └────┬─────┘
+                                                       │
+                                                       ▼
+                                               ┌───────────────┐
+                                               │ Register in   │
+                                               │ dbaas_registry│
+                                               │ + Emit Event  │
+                                               └───────────────┘
+```
+
+### State Machine
+
+```
+  ┌────────────┐    ┌──────────────┐    ┌─────────┐    ┌─────────┐
+  │  PENDING   │───>│ PROVISIONING │───>│ RUNNING │───>│ DELETED │
+  └────────────┘    └──────┬───────┘    └────┬────┘    └─────────┘
+                           │                 │
+                           ▼                 ▼
+                     ┌──────────┐      ┌──────────┐
+                     │  FAILED  │      │ SCALING  │
+                     └──────────┘      └──────────┘
+```
+
+---
+
+## 2. Backup Workflow
+
+The backup workflow handles trigger, snapshot, compression, encryption, and upload to RustFS.
+
+```
+ ┌─────────────────┐
+ │ Backup Trigger   │
+ │ (Scheduled /     │
+ │  Manual / API)   │
+ └────────┬────────┘
+          │
+          ▼
+ ┌─────────────────┐     ┌─────────────────────────┐
+ │ Validate Instance│────>│ Instance Health Check    │
+ │ Status           │     │ (Must be RUNNING)        │
+ └────────┬────────┘     └─────────────────────────┘
+          │
+          ▼ (Healthy)
+ ┌─────────────────┐
+ │ Acquire Lock     │  Prevents concurrent backups
+ │ (Distributed)    │  on the same instance
+ └────────┬────────┘
+          │
+          ▼
+ ┌─────────────────┐
+ │ Engine-Specific  │
+ │ Snapshot         │
+ │                  │
+ │ YugabyteDB:     │  ysql_dump / ysqlsh
+ │ ClickHouse:     │  clickhouse-backup
+ │ DragonflyDB:    │  RDB snapshot
+ │ Tembo (PG):     │  pg_basebackup
+ │ SurrealDB:      │  surreal export
+ │ QuestDB:        │  snapshot API
+ │ Apache Doris:   │  BACKUP TABLE
+ │ InfluxDB:       │  influx backup
+ └────────┬────────┘
+          │
+          ▼
+ ┌─────────────────┐
+ │ Compress         │
+ │ (zstd level 3)  │
+ │                  │
+ │ Input:  raw dump │
+ │ Output: .zst     │
+ └────────┬────────┘
+          │
+          ▼
+ ┌─────────────────┐
+ │ Encrypt          │
+ │ (AES-256-GCM)   │
+ │                  │
+ │ Key: tenant-     │
+ │ specific from    │
+ │ secrets mgr      │
+ └────────┬────────┘
+          │
+          ▼
+ ┌─────────────────┐
+ │ Upload to RustFS │
+ │                  │
+ │ Path: /backups/  │
+ │  {tenant_id}/    │
+ │  {instance_id}/  │
+ │  {timestamp}.enc │
+ └────────┬────────┘
+          │
+          ▼
+ ┌─────────────────┐
+ │ Record Metadata  │
+ │                  │
+ │ - Backup ID      │
+ │ - Checksum       │
+ │ - Size           │
+ │ - Encryption Key │
+ │ - Retention Date │
+ └────────┬────────┘
+          │
+          ▼
+ ┌─────────────────┐
+ │ Release Lock     │
+ │ Emit Event       │
+ │ (backup.complete)│
+ └─────────────────┘
+```
+
+---
+
+## 3. Scaling Workflow
+
+The scaling workflow covers request validation, health checks, resource resizing, optional data migration, and verification.
+
+```
+ ┌──────────────┐
+ │ Scale Request │
+ │ (UI / API)    │
+ └──────┬───────┘
+        │
+        ▼
+ ┌──────────────────┐
+ │ Validate Request  │
+ │                   │
+ │ - Target size     │
+ │ - Quota check     │
+ │ - Engine support  │
+ └──────┬───────────┘
+        │
+        ▼
+ ┌──────────────────┐     ┌─────────────┐
+ │ Pre-Scale Health  │────>│ ABORT if    │
+ │ Check             │     │ Unhealthy   │
+ └──────┬───────────┘     └─────────────┘
+        │ (Healthy)
+        ▼
+ ┌──────────────────┐
+ │ Determine Scale   │
+ │ Type              │
+ └──────┬───────────┘
+        │
+        ├─── Vertical ──────────────┐
+        │                           ▼
+        │                   ┌───────────────┐
+        │                   │ Update Pod     │
+        │                   │ Resources      │
+        │                   │ (CPU / Memory) │
+        │                   └───────┬───────┘
+        │                           │
+        │                           ▼
+        │                   ┌───────────────┐
+        │                   │ Rolling       │
+        │                   │ Restart       │
+        │                   └───────┬───────┘
+        │                           │
+        ├─── Horizontal ────────────┤
+        │                           │
+        │   ┌───────────────┐       │
+        │   │ Add / Remove  │       │
+        │   │ Replicas      │       │
+        │   └───────┬───────┘       │
+        │           │               │
+        │           ▼               │
+        │   ┌───────────────┐       │
+        │   │ Rebalance     │       │
+        │   │ Data / Shards │       │
+        │   └───────┬───────┘       │
+        │           │               │
+        └───────────┴───────────────┘
+                    │
+                    ▼
+            ┌───────────────┐
+            │ Post-Scale    │
+            │ Health Check  │
+            └───────┬───────┘
+                    │
+           ┌────────┤
+           │        │
+           ▼        ▼
+     ┌──────────┐ ┌──────────────┐
+     │ ROLLBACK │ │ UPDATE CRD   │
+     │ (Revert) │ │ + Metering   │
+     └──────────┘ │ + Emit Event │
+                  └──────────────┘
+```
+
+---
+
+## 4. Credential Rotation Flow
+
+```
+ ┌──────────────────┐
+ │ Rotation Trigger  │
+ │                   │
+ │ - Scheduled (90d) │
+ │ - Manual request  │
+ │ - Security alert  │
+ └──────┬───────────┘
+        │
+        ▼
+ ┌──────────────────┐
+ │ Generate New      │
+ │ Credentials       │
+ │                   │
+ │ - 32+ chars       │
+ │ - Mixed case      │
+ │ - Numbers         │
+ │ - Special chars   │
+ └──────┬───────────┘
+        │
+        ▼
+ ┌──────────────────┐
+ │ Create Creds on   │
+ │ Database Engine   │
+ │                   │
+ │ e.g. ALTER ROLE   │
+ │ SET PASSWORD ...  │
+ └──────┬───────────┘
+        │
+        ▼
+ ┌──────────────────┐      ┌─────────────┐
+ │ Verify New Creds  │─────>│ ABORT &     │
+ │ (Test Connection) │ Fail │ ALERT       │
+ └──────┬───────────┘      └─────────────┘
+        │ Success
+        ▼
+ ┌──────────────────┐
+ │ Update K8s Secret │
+ │ (New Credentials) │
+ └──────┬───────────┘
+        │
+        ▼
+ ┌──────────────────┐
+ │ Grace Period      │
+ │ (Default: 24h)   │
+ │                   │
+ │ Both old and new  │
+ │ credentials are   │
+ │ active            │
+ └──────┬───────────┘
+        │
+        ▼
+ ┌──────────────────┐
+ │ Revoke Old Creds  │
+ │ on Database       │
+ └──────┬───────────┘
+        │
+        ▼
+ ┌──────────────────┐
+ │ Audit Log Entry   │
+ │                   │
+ │ - Timestamp       │
+ │ - Actor           │
+ │ - Instance ID     │
+ │ - Rotation reason │
+ └──────────────────┘
+```
+
+---
+
+## 5. Failover / HA Workflow
+
+```
+ ┌───────────────────────────────────────────────────────────────┐
+ │                    STEADY STATE (HA Mode)                      │
+ │                                                                │
+ │  ┌──────────┐    Replication     ┌──────────┐                 │
+ │  │ PRIMARY  │ ─────────────────> │ REPLICA  │                 │
+ │  │ (Region  │    (sync /         │ (Region  │                 │
+ │  │    A)    │     async)         │    B)    │                 │
+ │  └────┬─────┘                    └────┬─────┘                 │
+ │       │                               │                        │
+ │       ▼                               ▼                        │
+ │  ┌──────────┐                    ┌──────────┐                 │
+ │  │ Health   │                    │ Health   │                 │
+ │  │ Monitor  │                    │ Monitor  │                 │
+ │  └──────────┘                    └──────────┘                 │
+ └───────────────────────────────────────────────────────────────┘
+
+              │ Primary fails 3 consecutive health checks
+              ▼
+
+ ┌──────────────────┐
+ │ FAILURE DETECTED  │
+ │                   │
+ │ Source:            │
+ │ - Health monitor   │
+ │ - K8s liveness    │
+ │ - External probe  │
+ └──────┬───────────┘
+        │
+        ▼
+ ┌──────────────────┐
+ │ Confirm Failure   │
+ │                   │
+ │ Cross-check with  │
+ │ multiple monitors │
+ │ (Avoid split-     │
+ │ brain)            │
+ └──────┬───────────┘
+        │
+        ▼
+ ┌──────────────────┐
+ │ Promote Replica   │
+ │ to Primary        │
+ │                   │
+ │ Engine-specific:  │
+ │ - YugabyteDB:     │
+ │   automatic via   │
+ │   Raft consensus  │
+ │ - DragonflyDB:    │
+ │   sentinel-based  │
+ │   promotion       │
+ └──────┬───────────┘
+        │
+        ▼
+ ┌──────────────────┐
+ │ Update DNS &      │
+ │ Service Records   │
+ │                   │
+ │ Route traffic to  │
+ │ new primary       │
+ └──────┬───────────┘
+        │
+        ▼
+ ┌──────────────────┐
+ │ Notify Tenants    │
+ │ + Emit Events     │
+ │                   │
+ │ - Pulsar event    │
+ │ - Webhook         │
+ │ - Dashboard alert │
+ └──────┬───────────┘
+        │
+        ▼
+ ┌──────────────────┐
+ │ Post-Failover     │
+ │                   │
+ │ - Monitor new     │
+ │   primary health  │
+ │ - Rebuild replica │
+ │   when old region │
+ │   recovers        │
+ │ - Data reconcile  │
+ └──────────────────┘
+```
+
+---
+
+## 6. Plugin Installation Flow
+
+```
+ ┌──────────────────┐
+ │ Developer Browses │
+ │ Plugin Registry   │
+ └──────┬───────────┘
+        │
+        ▼
+ ┌──────────────────┐
+ │ Select Plugin &   │
+ │ Target Instance   │
+ └──────┬───────────┘
+        │
+        ▼
+ ┌──────────────────┐
+ │ Compatibility     │
+ │ Check             │
+ │                   │
+ │ - Engine version  │
+ │ - Existing        │
+ │   plugins         │
+ │ - OS / arch       │
+ └──────┬───────────┘
+        │
+        ├──── Incompatible ──────> ┌──────────────┐
+        │                          │ REJECT with  │
+        │                          │ compatible   │
+        │                          │ version info │
+        │                          └──────────────┘
+        │ Compatible
+        ▼
+ ┌──────────────────┐
+ │ Security Policy   │
+ │ Check             │
+ │                   │
+ │ - Privilege level │
+ │ - Tenant policy   │
+ │ - Scan results    │
+ └──────┬───────────┘
+        │
+        ├──── Denied ────────────> ┌──────────────┐
+        │                          │ ESCALATE to  │
+        │                          │ Platform     │
+        │                          │ Admin        │
+        │                          └──────────────┘
+        │ Approved
+        ▼
+ ┌──────────────────┐
+ │ Download Plugin   │
+ │ Artifact from     │
+ │ Registry          │
+ └──────┬───────────┘
+        │
+        ▼
+ ┌──────────────────┐
+ │ Install on Engine │
+ │                   │
+ │ e.g. CREATE       │
+ │ EXTENSION ...     │
+ └──────┬───────────┘
+        │
+        ▼
+ ┌──────────────────┐     ┌─────────────────┐
+ │ Validation Tests  │────>│ ROLLBACK on     │
+ │                   │ Fail│ Failure         │
+ └──────┬───────────┘     └─────────────────┘
+        │ Pass
+        ▼
+ ┌──────────────────┐
+ │ Update Instance   │
+ │ Metadata          │
+ │                   │
+ │ - Plugin name     │
+ │ - Plugin version  │
+ │ - Install date    │
+ │ - Emit event      │
+ └──────────────────┘
+```
+
+---
+
+## Appendix: Sequence Diagram Legend
+
+| Symbol      | Meaning                                |
+|-------------|----------------------------------------|
+| `──────>`   | Synchronous request/data flow          |
+| `─ ─ ─ >`  | Asynchronous / event-driven flow       |
+| `┌──┐`      | Process or component boundary          |
+| `▼`         | Direction of flow                      |
+| `├────`     | Decision branch                        |
