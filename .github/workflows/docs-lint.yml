@@ -1,0 +1,40 @@
+name: Docs Lint
+
+on:
+  pull_request:
+    paths:
+      - '**/*.md'
+      - 'docs/**'
+      - '.github/**'
+  push:
+    branches: [main]
+    paths:
+      - '**/*.md'
+      - 'docs/**'
+      - '.github/**'
+
+jobs:
+  docs-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install linters
+        run: |
+          npm init -y
+          npm install --save-dev markdownlint-cli2 lychee @redocly/cli
+
+      - name: Markdown lint
+        run: npx markdownlint-cli2 "**/*.md"
+
+      - name: Link check
+        run: npx lychee --no-progress --exclude-mail --verbose docs README.md
+
+      - name: OpenAPI lint
+        run: npx redocly lint docs/01-architecture/API/openapi.yaml
