@@ -1,0 +1,337 @@
+[
+  {
+    "repository": "ERP-AI",
+    "hasWeb": true,
+    "hasGo": true,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "f186ae69",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-AIOps",
+    "hasWeb": true,
+    "hasGo": true,
+    "hasRust": true,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "7566454",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-Assistant",
+    "hasWeb": true,
+    "hasGo": true,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "4b73b4f",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-Autonomous-Coding",
+    "hasWeb": true,
+    "hasGo": true,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "4e804d8",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-BI",
+    "hasWeb": true,
+    "hasGo": false,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "00f6370",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-BSS-OSS",
+    "hasWeb": true,
+    "hasGo": false,
+    "hasRust": true,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "20386fbe",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-CRM",
+    "hasWeb": true,
+    "hasGo": false,
+    "hasRust": true,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "a05a26e",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-Church-Management",
+    "hasWeb": true,
+    "hasGo": true,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "bd0d1bfa",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-Commerce",
+    "hasWeb": true,
+    "hasGo": true,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "f4c8b969",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-DBaaS",
+    "hasWeb": true,
+    "hasGo": true,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "33f76eb",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-Finance",
+    "hasWeb": true,
+    "hasGo": true,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "1a6452c2",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-HCM",
+    "hasWeb": true,
+    "hasGo": true,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "f4196e1",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-Healthcare",
+    "hasWeb": false,
+    "hasGo": true,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "1f358c5",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-IAM",
+    "hasWeb": true,
+    "hasGo": true,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "5368068",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-Marketing",
+    "hasWeb": true,
+    "hasGo": false,
+    "hasRust": true,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "b4e67786",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-Observability",
+    "hasWeb": true,
+    "hasGo": true,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "8c04499",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-Platform",
+    "hasWeb": true,
+    "hasGo": false,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "b5d9b4a",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-Projects",
+    "hasWeb": true,
+    "hasGo": true,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "870cb9d0",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-SCM",
+    "hasWeb": true,
+    "hasGo": false,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "3fd128e",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-School-Management",
+    "hasWeb": false,
+    "hasGo": true,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "8fa1a2b",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-Web-Hosting",
+    "hasWeb": true,
+    "hasGo": false,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "9f99d02",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-Workspace",
+    "hasWeb": true,
+    "hasGo": true,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "80aea62e",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-eCommerce",
+    "hasWeb": true,
+    "hasGo": false,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "18b1bbf",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+,
+  {
+    "repository": "ERP-iPaaS",
+    "hasWeb": true,
+    "hasGo": false,
+    "hasRust": false,
+    "checklistStatus": "PASS",
+    "scorecardStatus": "PASS",
+    "contractsStatus": "PASS",
+    "branch": "infra/sovereign-consolidation",
+    "commit": "526e2b3",
+    "dirty": "YES",
+    "status": "PASS"
+  }
+]
