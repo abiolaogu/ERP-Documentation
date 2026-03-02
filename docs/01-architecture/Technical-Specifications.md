@@ -4,25 +4,25 @@ This document provides implementation-level specifications for three complex mod
 
 ## 1) Auth/RBAC Module
 
-### Responsibilities
+### Auth/RBAC Responsibilities
 
 - Authenticate User and Admin via OAuth2/OIDC.
 - Authorize actions using role and permission policies.
 - Enforce Tenant and Org context on every protected API endpoint.
 
-### API Contracts
+### Auth/RBAC API Contracts
 
 - `POST /auth/login`
 - `POST /auth/refresh`
 - `PATCH /tenants/{tenantId}/users/{userId}/roles`
 
-### Data Model (Core)
+### Auth/RBAC Data Model (Core)
 
 - `roles`: role metadata with scope and privilege tags.
 - `permissions`: atomic action grants.
 - `user_role_bindings`: User-to-role assignment per Tenant/Org.
 
-### Critical Logic
+### Auth/RBAC Critical Logic
 
 1. Parse token claims: `sub`, `tenant_id`, `org_id`, `roles`.
 2. Resolve policy matrix by Environment and route action.
@@ -37,24 +37,24 @@ This document provides implementation-level specifications for three complex mod
 
 ## 2) Billing Module
 
-### Responsibilities
+### Billing Responsibilities
 
 - Track subscription plan and usage-based metrics.
 - Execute and reconcile billing charges.
 - Produce invoice-ready summaries.
 
-### API Contracts
+### Billing API Contracts
 
 - `GET /tenants/{tenantId}/billing/summary`
 - `POST /tenants/{tenantId}/billing/charges`
 
-### Data Model (Core)
+### Billing Data Model (Core)
 
 - `subscriptions`: active plan and renewal dates.
 - `usage_records`: metric key, quantity, timestamp.
 - `charges`: charge status, idempotency key, external reference.
 
-### Critical Logic
+### Billing Critical Logic
 
 1. Validate idempotency key uniqueness per Tenant.
 2. Calculate amount from usage + plan rules.
@@ -69,17 +69,17 @@ This document provides implementation-level specifications for three complex mod
 
 ## 3) Audit and Observability Module
 
-### Responsibilities
+### Audit/Observability Responsibilities
 
 - Capture immutable audit events for critical actions.
 - Provide queryable event timeline for Admin and compliance.
 - Emit metrics/traces/logs for Service reliability.
 
-### API Contracts
+### Audit/Observability API Contracts
 
 - `GET /tenants/{tenantId}/audit-logs`
 
-### Event Envelope
+### Audit/Observability Event Envelope
 
 ```json
 {
@@ -95,14 +95,14 @@ This document provides implementation-level specifications for three complex mod
 }
 ```
 
-### SLO-Linked Metrics
+### Audit/Observability SLO-Linked Metrics
 
 - `api_request_duration_ms{route,environment}`
 - `audit_write_success_rate{environment}`
 - `notification_delivery_latency_ms{channel}`
 - `billing_charge_success_rate{environment}`
 
-### Observability Integration
+### Audit/Observability Integration
 
 - Structured logs with request and tenant correlation IDs
 - Traces spanning gateway to domain Service to storage

@@ -1,0 +1,9 @@
+globs:
+  - README.md
+  - SECURITY.md
+  - docs/**/*.md
+  - .github/pull_request_template.md
+config:
+  MD013: false
+  MD060: false
+  MD012: false

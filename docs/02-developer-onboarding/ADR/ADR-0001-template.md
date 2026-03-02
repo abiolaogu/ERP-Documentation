@@ -1,4 +1,4 @@
-# ADR-0001: <Decision Title>
+# ADR-0001: [Decision Title]
 
 - **Status**: Proposed | Accepted | Deprecated | Superseded
 - **Date**: YYYY-MM-DD

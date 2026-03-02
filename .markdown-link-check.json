@@ -1,0 +1,21 @@
+{
+  "ignorePatterns": [
+    { "pattern": "^https://api\\..*\\.example\\.com" },
+    { "pattern": "^https://.*\\.example\\.com" },
+    { "pattern": "^http://localhost" },
+    { "pattern": "^https://localhost" }
+  ],
+  "replacementPatterns": [],
+  "httpHeaders": [
+    {
+      "urls": ["https://github.com"],
+      "headers": {
+        "User-Agent": "docs-link-check"
+      }
+    }
+  ],
+  "timeout": "20s",
+  "retryOn429": true,
+  "retryCount": 2,
+  "fallbackRetryDelay": "5s"
+}
