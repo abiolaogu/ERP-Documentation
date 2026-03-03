@@ -71,6 +71,13 @@ This index provides a complete reading path from strategy through operations. Ev
      - `CRM_Source_Pack/CRM_README.md`
      - `CRM_Source_Pack/CRM_GITHUB/*`
 
+9. **Institutional Fundraising Suite**
+   - [Institutional Fundraising Suite Index](08-institutional-fundraising-suite/README.md)
+   - [Executive Summary (3 pages)](08-institutional-fundraising-suite/01_Executive_Summary.md)
+   - [Institutional Pitch Deck (15 slides)](08-institutional-fundraising-suite/02_Institutional_Pitch_Deck_15_Slides.md)
+   - [5-Year Financial Model](08-institutional-fundraising-suite/05_Five_Year_Financial_Model.md)
+   - [Investor FAQ (20 difficult questions)](08-institutional-fundraising-suite/13_Investor_FAQ_20_Difficult_Questions.md)
+
 ## System Terminology
 
 - **Product**: the commercial SaaS offering.
