@@ -78,6 +78,10 @@ This index provides a complete reading path from strategy through operations. Ev
    - [5-Year Financial Model](08-institutional-fundraising-suite/05_Five_Year_Financial_Model.md)
    - [Investor FAQ (20 difficult questions)](08-institutional-fundraising-suite/13_Investor_FAQ_20_Difficult_Questions.md)
 
+10. **Per-Project Fundraising Suites (ERP Portfolio)**
+   - [Portfolio Fundraising Index](09-portfolio-fundraising-index/README.md)
+   - Covers all `ERP-*` repositories with project-specific institutional fundraising packs.
+
 ## System Terminology
 
 - **Product**: the commercial SaaS offering.

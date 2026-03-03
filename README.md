@@ -13,6 +13,7 @@ This repository is the documentation-as-code system for a multi-tenant SaaS Prod
 7. [Project-Labeled Category-King Suites](docs/06-project-category-king/README.md)
 8. [Centralized Project Source Packs](docs/07-project-source-docs/README.md)
 9. [Institutional Fundraising Suite](docs/08-institutional-fundraising-suite/README.md)
+10. [Per-Project Fundraising Suites Index](docs/09-portfolio-fundraising-index/README.md)
 
 ## Quick Start (15 Minutes)
 
