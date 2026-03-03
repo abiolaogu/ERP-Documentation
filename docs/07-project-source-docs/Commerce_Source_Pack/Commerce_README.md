@@ -1,0 +1,32 @@
+# ERP-Commerce
+
+Sovereign ERP 2026 module frontend.
+
+## Local Development
+
+- Primary URL: http://localhost:5185
+- Additional URLs: none
+- Auth policy: dev-token-fallback
+
+```bash
+npm install --no-audit --no-fund
+npm run dev
+npm run typecheck
+npm run build
+```
+
+## Architecture
+
+- Next.js 16 App Router + TypeScript
+- Shadcn-style primitives + Tailwind CSS v4
+- Workik feature slices under `src/features/*`
+- TanStack Query default staleTime of 5 minutes
+- Realtime invalidation via Centrifugo topic:
+  `${NEXT_PUBLIC_ENV}.${NEXT_PUBLIC_ORG}.${NEXT_PUBLIC_MODULE}.
+  ${tenant}.ui.invalidate`
+- OIDC via ERP-IAM (Authentik) with fallback policy based on module requirements
+
+## Documentation Index
+- Start here: [docs/README.md](./docs/README.md)
+- Architecture: [docs/01-architecture/SAD.md](./docs/01-architecture/SAD.md)
+- DevOps and quality: [docs/03-quality-devops/CI-CD.md](./docs/03-quality-devops/CI-CD.md)

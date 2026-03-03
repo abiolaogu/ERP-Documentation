@@ -54,6 +54,23 @@ This index provides a complete reading path from strategy through operations. Ev
    - [Admin Portal Prompts](05-figma-make-prompts/Figma-Make-Admin-Portal.md)
    - [User Portal Prompts](05-figma-make-prompts/Figma-Make-User-Portal.md)
 
+7. **Project-Labeled Category-King Suites**
+   - [Project-Labeled Category-King Index](06-project-category-king/README.md)
+   - [Portfolio Figma Category-King Playbook](06-project-category-king/figma/Portfolio_Figma_Category_King_Playbook.md)
+   - Strategy docs: `06-project-category-king/strategy/*`
+   - Architecture docs: `06-project-category-king/architecture/*`
+   - Figma prompts: `06-project-category-king/figma/*`
+   - Example naming:
+     - [CRM Figma Category-King Prompts](06-project-category-king/figma/CRM_Figma_Category_King_Prompts.md)
+     - [CRM Architecture Category-King Blueprint](06-project-category-king/architecture/CRM_Architecture_Category_King_Blueprint.md)
+
+8. **Centralized Project Source Packs**
+   - [Project Source Docs Mirror](07-project-source-docs/README.md)
+   - One folder per project with prefixed names, for example:
+     - `CRM_Source_Pack/CRM_Docs/*`
+     - `CRM_Source_Pack/CRM_README.md`
+     - `CRM_Source_Pack/CRM_GITHUB/*`
+
 ## System Terminology
 
 - **Product**: the commercial SaaS offering.
@@ -72,4 +89,3 @@ This index provides a complete reading path from strategy through operations. Ev
 - Every feature change requires PRD section updates.
 - Every operational change requires runbook updates.
 - Every release requires changelog and release notes updates.
-

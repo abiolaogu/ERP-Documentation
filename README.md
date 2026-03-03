@@ -10,6 +10,8 @@ This repository is the documentation-as-code system for a multi-tenant SaaS Prod
 4. [Software Architecture Document (SAD)](docs/01-architecture/SAD.md)
 5. [CI/CD and Environment Promotion](docs/03-quality-devops/CI-CD.md)
 6. [Operations Manual](docs/04-user-ops/Operations-Manual.md)
+7. [Project-Labeled Category-King Suites](docs/06-project-category-king/README.md)
+8. [Centralized Project Source Packs](docs/07-project-source-docs/README.md)
 
 ## Quick Start (15 Minutes)
 
@@ -36,3 +38,9 @@ The System documented here represents a realistic enterprise SaaS with:
 - Compliance evidence mapping is maintained in [Compliance Matrix](docs/00-project-strategy/Compliance-Regulatory-Matrix.md).
 - Security reporting process is defined in [SECURITY.md](SECURITY.md).
 
+## Project-Labeled Documentation Convention
+
+- Strategy files: `<PROJECT>_Strategy_Category_King_Blueprint.md`
+- Architecture files: `<PROJECT>_Architecture_Category_King_Blueprint.md`
+- Figma prompt files: `<PROJECT>_Figma_Category_King_Prompts.md`
+- Source packs: `<PROJECT>_Source_Pack/`

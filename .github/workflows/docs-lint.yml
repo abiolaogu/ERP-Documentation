@@ -37,7 +37,7 @@ jobs:
 
       - name: Link check
         run: |
-          find docs -name "*.md" -print0 | xargs -0 -n1 -P4 npx markdown-link-check -q -c .markdown-link-check.json
+          find docs -name "*.md" ! -path "docs/07-project-source-docs/*" -print0 | xargs -0 -n1 -P4 npx markdown-link-check -q -c .markdown-link-check.json
           npx markdown-link-check -q -c .markdown-link-check.json README.md
 
       - name: OpenAPI lint

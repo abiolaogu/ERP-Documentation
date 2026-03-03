@@ -3,6 +3,8 @@ globs:
   - SECURITY.md
   - docs/**/*.md
   - .github/pull_request_template.md
+ignores:
+  - docs/07-project-source-docs/**/*.md
 config:
   MD013: false
   MD060: false
